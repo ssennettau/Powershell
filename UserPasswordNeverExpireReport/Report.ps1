@@ -1,3 +1,4 @@
+# Common Variables
 $EmailTo = "Sysadmins@contoso.local"
 $ReportPath = "C:\PSReport\"
 $OUs = @(
@@ -6,8 +7,10 @@ $OUs = @(
     "OU=Sales,OU=Departments,DC=contoso,DC=local"
 )
 
+# Imports module to interact with AD (NOTE: Must be installed)
 Import-Module ActiveDirectory
 
+# Splats the recurring parameters used for Get-ADUser
 $ADParams = @{
     SearchScope = 'Subtree'
     Filter = '(PasswordNeverExpires -eq $true)'
