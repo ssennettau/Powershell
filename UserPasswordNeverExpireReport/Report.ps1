@@ -1,5 +1,7 @@
 # Common Variables
 $EmailTo = "Sysadmins@contoso.local"
+$EmailFrom = "TechReports@contoso.local"
+$EmailServer = "PROEX01.contoso.local"
 $ReportPath = "C:\PSReport\"
 $OUs = @(
     "OU=Engineering,OU=NAT,OU=Departments,DC=contoso,DC=local"
@@ -61,9 +63,9 @@ $content | Out-File -FilePath "$ReportPath\passwordexpiry-$(Get-Date -Format "yy
 
 # Sends the Report in an Email
 Send-MailMessage `
-    -From "TechReports@contoso.local" `
+    -From $EmailFrom `
     -To $EmailTo `
-    -SmtpServer "PROEX01.contoso.local" `
+    -SmtpServer $EmailServer `
     -Subject "PasswordNeverExpires Review - $(Get-Date -F "ddd dd/MM/yyyy")" `
     -Body $content `
     -BodyAsHtml
