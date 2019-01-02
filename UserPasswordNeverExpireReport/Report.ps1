@@ -1,10 +1,25 @@
+$EmailTo = "Sysadmins@contoso.local"
+$ReportPath = "C:\PSReport\"
+$OUs = @(
+    "OU=Engineering,OU=NAT,OU=Departments,DC=contoso,DC=local"
+    "OU=Marketing,OU=Departments,DC=contoso,DC=local"
+    "OU=Sales,OU=Departments,DC=contoso,DC=local"
+)
+
 Import-Module ActiveDirectory
+
+$ADParams = @{
+    SearchScope = 'Subtree'
+    Filter = '(PasswordNeverExpires -eq $true)'
+    Properties = 'Title','Department','PasswordNeverExpires'
+}
 
 # Gather user details from relevant OU's
 $Users = @()
-$Users += Get-ADuser -SearchBase "OU=Engineering,OU=NAT,OU=Departments,DC=contoso,DC=local" -SearchScope Subtree -Filter '(PasswordNeverExpires -eq $true)' -Properties Title,Department,PasswordNeverExpires
-$Users += Get-ADuser -SearchBase "OU=Marketing,OU=Departments,DC=contoso,DC=local" -SearchScope Subtree -Filter '(PasswordNeverExpires -eq $true)' -Properties Title,Department,PasswordNeverExpires
-$Users += Get-ADuser -SearchBase "OU=Sales,OU=Departments,DC=contoso,DC=local" -SearchScope Subtree -Filter '(PasswordNeverExpires -eq $true)' -Properties Title,Department,PasswordNeverExpires
+Foreach ($OU in $OUs)
+{
+    $Users += Get-ADUser @ADParams -SearchB
+}
 
 # Exclude any users based on particular criteria
 $Users = $Users | Where-Object -FilterScript { $_.Department -ne 'Executive' }
@@ -39,12 +54,12 @@ $content += "</table>"
 $content += "<h6>Executed on $($env:computername)</h6>"
 
 # Saves a copy of the report in a HTML file
-$content | Out-File -FilePath "$(Get-Date -Format "yyyyMMdd-hhmm")-passwordexpiry.html"
+$content | Out-File -FilePath "$ReportPath\passwordexpiry-$(Get-Date -Format "yyyyMMdd-hhmm").html"
 
 # Sends the Report in an Email
 Send-MailMessage `
     -From "TechReports@contoso.local" `
-    -To "Sysadmins@contoso.local" `
+    -To $EmailTo `
     -SmtpServer "PROEX01.contoso.local" `
     -Subject "PasswordNeverExpires Review - $(Get-Date -F "ddd dd/MM/yyyy")" `
     -Body $content `
