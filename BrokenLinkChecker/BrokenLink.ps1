@@ -67,18 +67,30 @@ function Test-Links
     }
 }
 
-
-$Uri = "https://www.github.com/"
-
-try
+Function Test-WebRequestLinks
 {
-    $Response = Invoke-WebRequest -Uri $Uri -UseBasicParsing
-}
-catch
-{
-    throw "Could not load Uri"
+    [CmdletBinding()]
+    Param
+    (
+        [Parameter(Mandatory=$true,
+                   ValueFromPipeline=$true,
+                   ValueFromPipelineByPropertyName=$true,
+                   Position=0)]
+        $Uri
+    )
+
+    try
+    {
+        $Response = Invoke-WebRequest -Uri $Uri -UseBasicParsing
+    }
+    catch
+    {
+        throw "Could not load Uri"
+    }
+
+    $Links = $Response.Links.href
+
+    Test-Links -Links $Links
 }
 
-$Links = $Response.Links.href
-
-Test-Links -Links $Links
+Test-WebRequestLinks -Uri 'http://www.google.com/'
