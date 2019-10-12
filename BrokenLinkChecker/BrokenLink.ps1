@@ -25,7 +25,6 @@ function Test-Links
                    ValueFromPipeline=$true,
                    ValueFromPipelineByPropertyName=$true,
                    Position=0)]
-        [string[]]
         $Links
     )
 
@@ -67,3 +66,19 @@ function Test-Links
         return $Results
     }
 }
+
+
+$Uri = "https://www.github.com/"
+
+try
+{
+    $Response = Invoke-WebRequest -Uri $Uri -UseBasicParsing
+}
+catch
+{
+    throw "Could not load Uri"
+}
+
+$Links = $Response.Links.href
+
+Test-Links -Links $Links
