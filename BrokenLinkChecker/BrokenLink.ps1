@@ -69,6 +69,17 @@ function Test-Links
 
 Function Test-WebRequestLinks
 {
+    <#
+    .Synopsis
+       Tests validity of links on a webpage
+    .DESCRIPTION
+       Performs a test on each of the links on a webpage, and returns a "True"
+       response for each that it can reach the Uri (follows redirects)
+    .EXAMPLE
+       Test-WebRequestLinks -Uri "http://www.google.com/"
+
+       Performs checks on all of the links found on http://www.google.com
+    #>
     [CmdletBinding()]
     Param
     (
